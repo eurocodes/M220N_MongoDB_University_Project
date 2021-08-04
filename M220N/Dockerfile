@@ -4,16 +4,11 @@
 #For more information, please see https://aka.ms/containercompat
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+FROM node
 WORKDIR /app
 COPY . ./
 RUN dotnet restore
 COPY . ./
-
-
-# Install nodejs
-FROM build AS publish
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash –
-RUN apt-get install -y nodejs
 
 # testing
 FROM build AS testing
