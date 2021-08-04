@@ -4,11 +4,13 @@
 #For more information, please see https://aka.ms/containercompat
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
-FROM node
 WORKDIR /app
 COPY . ./
 RUN dotnet restore
 COPY . ./
+
+# Install nodejs
+FROM node
 
 # testing
 FROM build AS testing
