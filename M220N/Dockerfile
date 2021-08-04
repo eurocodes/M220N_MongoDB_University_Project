@@ -16,6 +16,23 @@ RUN dotnet build
 WORKDIR /app
 RUN dotnet test
 
+# Install nodejs
+FROM Node
+# Create app directory
+WORKDIR /app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
+
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
+
+# Bundle app source
+COPY . ./
+
 # Build
 WORKDIR /app
 RUN dotnet build
@@ -28,6 +45,9 @@ RUN dotnet publish -c Release -o /app/publish
 #Get the runtime into a folder called app
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS runtime
 WORKDIR /app
+
+# Expose port 80 to your local machine so you can access the app.
+EXPOSE 80
 # COPY --from=publish /app/M220N.db .
 COPY --from=publish /app/publish .
 # ENTRYPOINT ["dotnet", "M220N.dll"]
