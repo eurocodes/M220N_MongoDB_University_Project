@@ -9,17 +9,18 @@ COPY . ./
 RUN dotnet restore
 COPY . ./
 
+
+# Install nodejs
+FROM build AS publish
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash –
+RUN apt-get install -y nodejs
+
 # testing
 FROM build AS testing
 WORKDIR /app
 RUN dotnet build
 WORKDIR /app
 RUN dotnet test
-
-# Install nodejs
-FROM build AS publish
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash –
-RUN apt-get install -y nodejs
 
 # Build
 WORKDIR /app
