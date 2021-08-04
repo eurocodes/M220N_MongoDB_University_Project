@@ -5,12 +5,13 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /app
+
+RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
+RUN apt-get install -y nodejs
+
 COPY . ./
 RUN dotnet restore
 COPY . ./
-
-# Install nodejs
-FROM node AS build
 
 # testing
 FROM build AS testing
