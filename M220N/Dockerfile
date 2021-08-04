@@ -11,9 +11,9 @@ COPY . ./
 
 # testing
 FROM build AS testing
-WORKDIR /app/M220NTests
+WORKDIR /app
 RUN dotnet build
-WORKDIR /app/M220NTests
+WORKDIR /app
 RUN dotnet test
 
 # Build
