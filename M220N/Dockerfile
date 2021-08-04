@@ -10,7 +10,7 @@ RUN dotnet restore
 COPY . ./
 
 # Install nodejs
-FROM node
+FROM node AS build
 
 # testing
 FROM build AS testing
