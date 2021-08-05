@@ -33,5 +33,5 @@ EXPOSE 80
 COPY --from=build /app/publish .
 
 # To run the app, run `dotnet sample-app.dll`, which we just copied over.
-ENTRYPOINT ["dotnet", "M220N.dll"]
+# ENTRYPOINT ["dotnet", "M220N.dll"]
 CMD ASPNETCORE_URLS=https://*:$PORT dotnet M220N.dll
