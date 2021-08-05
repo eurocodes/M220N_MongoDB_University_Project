@@ -41,6 +41,6 @@ EXPOSE 80
 
 # COPY --from=publish /app/M220N.db .
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "M220N.dll"]
+# ENTRYPOINT ["dotnet", "M220N.dll"]
 # Change to heroku entry point
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet M220N.dll
+CMD ASPNETCORE_URLS=https://*:$PORT dotnet M220N.dll
