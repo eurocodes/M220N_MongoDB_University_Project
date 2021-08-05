@@ -34,3 +34,6 @@ COPY --from=build /app/publish .
 
 # To run the app, run `dotnet sample-app.dll`, which we just copied over.
 ENTRYPOINT ["dotnet", "M220N.dll"]
+RUN build -t . .
+RUN -p $PORT:$PORT
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet M220N.dll
