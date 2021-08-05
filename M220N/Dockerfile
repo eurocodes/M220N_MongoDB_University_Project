@@ -24,10 +24,6 @@ RUN dotnet test
 WORKDIR /app
 RUN dotnet build
 
-# Build react app
-WORKDIR /app
-RUN npm run build
-
 # Publishing
 FROM build AS publish
 WORKDIR /app
