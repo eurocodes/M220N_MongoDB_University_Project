@@ -22,7 +22,16 @@ RUN dotnet test
 
 # Build
 WORKDIR /app
-RUN dotnet publish -c release -o /app/publish --no-cache
+RUN dotnet build
+
+# Build react app
+WORKDIR /app
+RUN npm run build
+
+# Publishing
+FROM build AS publish
+WORKDIR /app
+RUN dotnet publish -c Release -o /app/publish --no-cache
 
 #Get the runtime into a folder called app
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS runtime
