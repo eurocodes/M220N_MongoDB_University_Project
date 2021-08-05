@@ -1,46 +1,36 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Pull down an image from Docker Hub that includes the .NET core SDK: 
+# https://hub.docker.com/_/microsoft-dotnet-core-sdk
+# This is so we have all the tools necessary to compile the app.
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
+# Fetch and install Node 10. Make sure to include the --yes parameter 
+# to automatically accept prompts during install, or it'll fail.
+RUN curl --silent --location https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install --yes nodejs
 
-FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
-WORKDIR /app
+# Copy the source from your machine onto the container.
+WORKDIR /src
+COPY . .
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
-RUN apt-get install -y nodejs
+# Install dependencies. 
+# https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-restore?tabs=netcore2x
+RUN dotnet restore "./M220N.csproj"
 
-COPY . ./
-RUN dotnet restore
-COPY . ./
+# Compile, then pack the compiled app and dependencies into a deployable unit.
+# https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish?tabs=netcore21
+RUN dotnet publish "M220N.csproj" -c Release -o /app/publish
 
-# testing
-FROM build AS testing
-WORKDIR /app
-RUN dotnet build
-WORKDIR /app
-RUN dotnet test
-
-# Build
-WORKDIR /app
-RUN dotnet build
-
-# Publishing
-FROM build AS publish
-WORKDIR /app
-RUN dotnet publish -c Release -o /app/publish --no-cache
-
-#Get the runtime into a folder called app
-FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS runtime
-WORKDIR /app
-
-COPY ClientApp/. /app
-# RUN npm run build
+# Pull down an image from Docker Hub that includes only the ASP.NET core runtime:
+# https://hub.docker.com/_/microsoft-dotnet-core-aspnet/
+# We don't need the SDK anymore, so this will produce a lighter-weight image
+# that can still run the app.
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
 
 # Expose port 80 to your local machine so you can access the app.
 EXPOSE 80
 
-# COPY --from=publish /app/M220N.db .
-COPY --from=publish /app/publish .
-# ENTRYPOINT ["dotnet", "M220N.dll"]
-# Change to heroku entry point
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet M220N.dll
+# Copy the published app to this new runtime-only container.
+COPY --from=build /app/publish .
+
+# To run the app, run `dotnet sample-app.dll`, which we just copied over.
+ENTRYPOINT ["dotnet", "M220N.dll"]
