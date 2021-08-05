@@ -34,7 +34,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS runtime
 WORKDIR /app
 
 COPY ClientApp/. /app
-RUN npm run build
+# RUN npm run build
 
 # Expose port 80 to your local machine so you can access the app.
 EXPOSE 80
