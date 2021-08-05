@@ -14,11 +14,11 @@ RUN dotnet restore
 COPY . ./
 
 # testing
-FROM build AS testing
-WORKDIR /app
-RUN dotnet build
-WORKDIR /app
-RUN dotnet test
+# FROM build AS testing
+# WORKDIR /app
+# RUN dotnet build
+# WORKDIR /app
+# RUN dotnet test
 
 # Build
 WORKDIR /app
